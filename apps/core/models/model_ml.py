@@ -7,7 +7,7 @@ from .. import constants
 
 
 def owner_folder(instance, filename) -> str:
-    return f'core/ml/{instance.owner_id}/{filename}'
+    return f"core/ml/{instance.owner_id}/{filename}"
 
 
 class ModelML(models.Model):
@@ -15,8 +15,8 @@ class ModelML(models.Model):
 
     # Campo id ou pk já é automaticamente criado
     nome = models.CharField(
-        verbose_name='Nome do modelo',
-        help_text='Nome a ser exibido para o usuário',
+        verbose_name="Nome do modelo",
+        help_text="Nome a ser exibido para o usuário",
         max_length=100,
         blank=False,
     )
@@ -25,16 +25,16 @@ class ModelML(models.Model):
         max_length=500,
         null=False,
         blank=True,
-        default='',
+        default="",
     )
     tipo = models.IntegerField(
-        verbose_name='Tipo do modelo',
-        help_text='Explicita se é um modelo de classificação ou regressão',
+        verbose_name="Tipo do modelo",
+        help_text="Explicita se é um modelo de classificação ou regressão",
         choices=constants.ModelType,
     )
     is_public = models.BooleanField(
-        verbose_name='é publico?',
-        help_text='Define se pode ser acessado por um usuário anônimo',
+        verbose_name="é publico?",
+        help_text="Define se pode ser acessado por um usuário anônimo",
         default=True,
         db_default=True,
     )
@@ -43,30 +43,35 @@ class ModelML(models.Model):
         null=False,
         blank=False,
     )
-    updated_at = models.DateTimeField(auto_now=True, help_text='Ultima atualização')
-    created_at = models.DateTimeField(auto_now_add=True, help_text='Data de criação')
+    updated_at = models.DateTimeField(auto_now=True, help_text="Ultima atualização")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação")
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='models',
-        help_text='Dono do modelo'
+        related_name="models",
+        help_text="Dono do modelo",
     )
 
     class Meta:
-        verbose_name = 'Modelo de Machine Learn'
-        verbose_name_plural = 'Modelos de Machine Learn'
+        verbose_name = "Modelo de Machine Learn"
+        verbose_name_plural = "Modelos de Machine Learn"
 
     def __str__(self):
-        return f'<{self.nome}>'
-
+        return f"<{self.nome}>"
 
     _ml = None
 
     @property
     def model(self):
         if self._ml is None:
-            with self.arquivo.file as f:
+            with self.arquivo.open("rb") as f:
                 self._ml = pickle.load(f)
+
+            # ATENÇÃO: Contorno de BUG no Windows
+            # Como o Windows não tem 'fork()', modelos treinados com n_jobs=-1 ou maiores que 1
+            # travam ou derrubam o servidor web na hora de rodar o predict() fora da thread principal.
+            if hasattr(self._ml, "n_jobs"):
+                self._ml.n_jobs = 1
         return self._ml
 
     def predict(self, *items):
