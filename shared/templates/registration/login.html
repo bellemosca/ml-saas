@@ -1,0 +1,16 @@
+{% extends "base/page.html" %}
+{% load i18n static django_bootstrap5 %}
+
+{% block content %}
+<form class="d-flex card bg-secondary-subtle p-3 col-4" method="post" id="login-form">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  
+  {% bootstrap_form form %}
+  
+  <div class="d-grid">
+    {% translate "Log in" as LOGIN_MSG %}
+    {% bootstrap_button button_type="submit" content=LOGIN_MSG %}
+  </div>
+</form>
+{% endblock content %}

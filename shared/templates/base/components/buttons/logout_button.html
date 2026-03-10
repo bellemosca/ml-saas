@@ -1,0 +1,7 @@
+{% load i18n django_bootstrap5 %}
+
+<form action="{% url LOGOUT_URL %}" method="post">
+  {% csrf_token %}
+  {% translate 'Log out' as LOGOUT_MSG %}
+  {% bootstrap_button button_type="submit" button_class="btn-outline-danger" content=LOGOUT_MSG %}
+</form>

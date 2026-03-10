@@ -1,0 +1,22 @@
+{% extends "base/page.html" %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+{% if form %}
+<div class="col">
+  {% include "core/question/detail.html" with question=question %}
+
+  <div class="d-flex justify-content-center mb-5">
+    <form class="card bg-subtle p-4 col-6" method="post" id="diabetes-form">
+      {% csrf_token %}
+
+      {% bootstrap_form form layout="floating" %}
+
+      {% bootstrap_button button_type="submit" extra_classes="d-grid" content="Estimar" %}
+    </form>
+  </div>
+</div>
+{% else %}
+{% bootstrap_alert "Questão inválida" alert_type="danger" dismissible=False %}
+{% endif %}
+{% endblock content %}
