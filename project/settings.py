@@ -34,10 +34,17 @@ DEBUG = os.environ.get("DEBUG", "False").lower() in ("true", "1", "t")
 allowed_hosts_env = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1")
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",") if host.strip()]
 
+render_external_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if render_external_hostname:
+    ALLOWED_HOSTS.append(render_external_hostname)
+
 csrf_env = os.environ.get("CSRF_TRUSTED_ORIGINS", "")
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in csrf_env.split(",") if origin.strip()
 ]
+
+if render_external_hostname:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_external_hostname}")
 
 # Application definition
 
