@@ -9,7 +9,7 @@ cmd = [
     "uv",
     "run",
     "gunicorn",
-    "config.wsgi:application",
+    "project.wsgi:application",
     "--bind",
     f"0.0.0.0:{port}",
 ]
