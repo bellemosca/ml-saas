@@ -16,3 +16,6 @@ run(["uv", "run", "python", "manage.py", "migrate"])
 
 # Coleta arquivos estáticos
 run(["uv", "run", "python", "manage.py", "collectstatic", "--noinput"])
+
+# Popula o banco de dados com os modelos iniciais e superuser
+run(["uv", "run", "python", "seed/seed_db.py"])
